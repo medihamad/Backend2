@@ -13,8 +13,12 @@ app.get('/', (req, res)=>{
 })
 
 app.post('/', (req, res)=>{
-    console.log(req.body);
-    res.send('this is a post request');
+    const {username, password} = req.body;
+
+    res.status(201).json({
+        message: 'success',
+        data: {username, password}
+    })
 })
 
 app.get('/user', (req, res)=>{
