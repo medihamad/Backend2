@@ -1,7 +1,8 @@
 const express = require('express');
+require('dotenv').config();
 
 const app = express();
-
+const PORT = process.env.PORT;
 //middlewares
 
 app.use(express.json());
@@ -33,7 +34,7 @@ app.get('/data', (req, res)=>{
     })
 })
 
-app.listen(3000, ()=>{
-    console.log('listenning on port ', 3000);
+app.listen(PORT, ()=>{
+    console.log('listenning on port ', PORT);
 })
 
