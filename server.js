@@ -1,11 +1,23 @@
 const express = require('express');
+const { v4 : uuidv4 } = require('uuid');
+
+
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT;
-//middlewares
+
+//middlewares => functions that run between req and response, it can block req, read req
 
 app.use(express.json());
+
+const logger = (req, res, next)=>{
+    console.log(req.method, req.url);
+    next();
+}
+
+app.use(logger)
+
 
 //routes path
 
@@ -31,12 +43,12 @@ app.get('/user', (req, res)=>{
 
 let students = [
     {
-        id: 1, 
+        id: uuidv4(), 
         name: 'John',
         age: 22
     },
     {
-        id: 2, 
+        id: uuidv4(), 
         name: 'Medi',
         age: 36
     }
@@ -58,7 +70,7 @@ app.post('/students', (req, res)=>{
     })
 
     const newStudent = {
-        id: students.length + 1,
+        id: uuidv4(),
         name, 
         age
     }
@@ -76,7 +88,7 @@ app.post('/students', (req, res)=>{
 //GET /students/:id
 
 app.get('/students/:id',(req, res)=>{
-    const id = Number(req.params.id);
+    const id = req.params.id;
 
     const student = students.find(st=> st.id === id);
 
@@ -89,7 +101,7 @@ app.get('/students/:id',(req, res)=>{
 //PUT /students/:id
 
 app.patch('/students/:id', (req, res)=>{
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const {name, age} = req.body
 
     const student = students.find(st=> st.id === id);
@@ -102,6 +114,23 @@ app.patch('/students/:id', (req, res)=>{
     res.status(200).json(students);
 
 
+})
+
+//DELETE /students/:id
+
+app.delete('/students/:id', (req, res)=>{
+    const id = req.params.id;
+
+    const index = students.findIndex(st => st.id === id);
+
+    if(index === -1) return res.status(404).json({message: "student not found"});
+
+    
+    const deletedStudent = students.splice(index, 1)
+
+    console.log()
+
+    res.status(200).json({message: "student deleted", data: deletedStudent});
 })
 
 app.get('/data', (req, res)=>{
